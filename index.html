@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    #app {
+      width: 600px;
+      margin: 10px auto;
+    }
+
+    .tb {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    .tb th {
+      background-color: #0094ff;
+      color: white;
+    }
+
+    .tb td,
+    .tb th {
+      padding: 5px;
+      border: 1px solid black;
+      text-align: center;
+    }
+
+    .add {
+      padding: 5px;
+      border: 1px solid black;
+      margin-bottom: 10px;
+    }
+
+    .alert {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      width: 200px;
+      height: 100px;
+      border-radius: 10px;
+      box-shadow: 0 1px 5px #333;
+      padding: 10px;
+    }
+
+    .alert .content {
+      text-align: center;
+      color: red;
+    }
+
+    .alert .btn_group {
+      margin: 0 auto;
+      width: 140px;
+      display: flex;
+      justify-content: space-around;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="add">
+      品牌名称:
+      <input type="text" v-model="name">
+      <input type="button" value="添加" @click="add">
+    </div>
+    <div>
+      <table class="tb">
+        <tr>
+          <th>编号</th>
+          <th>品牌名称</th>
+          <th>创立时间</th>
+          <th>操作</th>
+        </tr>
+        <tr v-for="(item,index) in list" :key="index">
+          <td>{{index+1}}</td>
+          <td>{{item.name}}</td>
+          <td>{{item.date.toLocaleString()}}</td>
+          <td>
+            <a href="#" @click.prevent="setDel(item.name)">删除</a>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4" v-show="list.length===0">没有品牌数据</td>
+        </tr>
+      </table>
+    </div>
+    <div class="alert" v-if="isShow">
+      <p class="content">确认删除此条数据?</p>
+      <div class="btn_group">
+        <button @click="del">确认</button>
+        <button @click="cancel">取消</button>
+      </div>
+    </div>
+  </div>
+  <script src="./vue.js"></script>
+  <script>
+    /*
+        1. 静态页面 准备
+        2. 实例化一个Vue
+        3. 定义表格数据
+        4. 采用v-for 循环将静态内容切换为动态内容
+        5. 采用v-if控制提示消息
+        */
+    // 准备数据
+    new Vue({
+        el: "#app",
+        data: {
+          list: [{
+            name: 'TCL',
+            date: new Date()
+          }, {
+            name: '小米',
+            date: new Date()
+          }, {
+            name: '苹果',
+            date: new Date()
+          }],
+          // 要添加的商品名称
+          name: '',
+          deleName: "",
+          isShow: false,
+        },
+        methods: {
+          // 添加
+          add() {
+            if (!this.name.trim()) {
+              return;
+            }
+            this.list.push({
+              name: this.name,
+              date: new Date
+            });
+            this.name = "";
+          },
+          setDel(name) {
+            this.deleName = name;
+            this.isShow = true;
+          },
+          // 删除
+          del() {
+            const index = this.list.findIndex(item => item.name === this.deleName);
+            this.list.splice(index, 1);
+            this.deleName = "";
+            this.isShow = false;
+          },
+          cancel() {
+            this.deleName = "";
+            this.isShow = false;
+          }
+        }
+      },
+
+    )
+  </script>
+</body>
+
+</html>
